@@ -1,0 +1,52 @@
+RobCoGen v0.4.0 beta
+August 2015
+
+Copyright © 2015, Marco Frigerio (marco.frigerio@iit.it)
+All rights reserved.
+
+https://bitbucket.org/mfrigerio17/roboticscodegenerator/wiki/Home
+
+
+Installation
+============
+In fact nothing has to be "installed".
+Just unpack the archive file somewhere in your filesystem.
+
+The contents should be:
+
+- robcogen.jar    : the actual robotics code generator
+- lib/            : other jar files required by the generator
+- maxima_libs/    : the Maxima source code required by the code generator to work
+- framework.properties
+  cpp.properties
+  log4j.properties : template configuration files. Change them according to your
+                     needs; all the defaults should be fine.
+
+- iit_rbd_cpp.zip : the archive with the C++ headers required to compile the
+   generated C++ code. Unpack this file somewhere, and install (ie copy) the
+   headers into a system folder by running the install script.
+   Note that these files are not required to *run* the code generator itself,
+   but rather to use its C++ output.
+
+To generate coordinate transforms and Jacobians you will need to install the
+Maxima symbolic engine.
+
+Usage
+=====
+Invoke the generator with:
+
+./robcogen.sh <model>.kindsl [<config>.dtdsl]
+
+where
+- <model>.kindsl is the document describing the kinematics/dynamics of your robot
+- <config>.dtdsl is the document containing the desired transforms/Jacobians (optional argument)
+
+Remember that before generating any implementation of transforms/Jacobians, you
+first need to generate the symbolic code for them (ie the Maxima code).
+In the generator menu, just select the generation target for the Maxima code
+first, if you have not done it before.
+
+More information
+================
+Please check the wiki at the following web address:
+https://bitbucket.org/mfrigerio17/roboticscodegenerator/wiki/Home

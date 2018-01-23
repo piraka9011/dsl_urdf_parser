@@ -1,0 +1,21 @@
+/*
+ * This file is a document of the Desired-Transforms-DSL.
+ * This file is part of the binary distribution of the Robotics Code Generator (RobCoGen).
+ *
+ * Copyright © 2015, Marco Frigerio. All rights reserved.
+ */
+
+Robot Fancy
+
+Frames {
+    fr_link1,fr_link2,fr_link3,fr_link4,fr_link5, fr_FancyBase, ee
+}
+
+Transforms {
+    base=fr_FancyBase, target=fr_link5
+    base=fr_FancyBase, target=ee
+}
+
+Jacobians {
+	base=fr_FancyBase, target=ee
+}
