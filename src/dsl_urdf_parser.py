@@ -4,9 +4,9 @@
 Maintained by Anas Abou Allaban - abouallaban.a@husky.neu.edu"""
 
 import roslib; roslib.load_manifest('urdfdom_py')
-import rospy
-from os.path import realpath, dirname
 from urdf_parser_py.urdf import URDF
+from os.path import realpath, dirname
+
 
 class Inertia:
     """This class holds all the inertia variables associated with a link.
@@ -93,6 +93,10 @@ class Link:
         self.isBase = is_base
         self.frame = frame
 
+    def set_ref_frame(self, name):
+        self.frame.name = name
+        self.inertia_properties.ref_frame_name = name
+
     def __str__(self):
         if self.isBase:
             return 'RobotBase {} {{\n' \
@@ -130,7 +134,7 @@ class Robot:
         self.base = base
         self.links = [base]
         self.links.append(links)
-        self.id = 1
+        self.id = 0
 
     def set_name(self, name):
         self.name = name
@@ -163,38 +167,80 @@ class DslUrdfParser:
         self.urdf = URDF.from_xml_file(dirname(realpath(__file__)) + '/sawyer.urdf')
         self.dsl = Robot()
 
+        # Start
+        self.set_robot_base('base')
+        self.get_links()
+
+    def _parse_inertia(self, urdf_link):
+        i = urdf_link.inertial.inertia
+        return Inertia(i.ixx, i.iyy, i.izz, i.ixy, i.ixz, i.iyz)
+
+    def _parse_link_translation(self, urdf_link):
+        t = urdf_link.inertial.origin.position
+        return (t[0], t[1], t[2])
+
+    def _parse_link_rotation(self, urdf_link):
+        r = urdf_link.inertial.origin.rotation
+        return (r[0], r[1], r[2])
+
     def set_robot_name(self):
         self.dsl.set_name(self.urdf.name)
 
-    def set_robot_base(self):
-        self.dsl.base = Link(link_name='base', is_base=True)
+    def set_robot_base(self, name):
+        """Set the robot's base (root of kinematic tree)
+        :param name: Name of the base link in the URDF file"""
+        urdf_base_link = self.urdf.link_map[name]
+        self.dsl.base = Link(link_name=name, is_base=True)
+        self.dsl.base.inertia_properties.inertia = self._parse_inertia(urdf_base_link)
+        self.dsl.base.inertia_properties.mass = urdf_base_link.inertial.mass
+        self.dsl.base.frame.rotation = self._parse_link_rotation(urdf_base_link)
+        self.dsl.base.frame.translation = self._parse_link_translation(urdf_base_link)
+        self.dsl.base.set_ref_frame('ref_' + name)
 
     def get_links(self):
+        """Iterate through URDF links and create new DSL links"""
         for link in self.urdf.links:
-            new_link = Link()
-            new_link.link_name = link.name
+            # Don't add the link if it has no properties
             if link.inertial is not None:
+                # Create new link
+                new_link = Link()
+                new_link.link_name = link.name
                 # Set inertia values
-                i = link.inertial.inertia
-                new_link.inertia_properties.inertia = \
-                    Inertia(i.ixx, i.iyy, i.izz, i.ixy, i.ixz, i.iyz)
+                new_link.inertia_properties.inertia = self._parse_inertia(link)
                 # Set mass
                 new_link.inertia_properties.mass = link.inertial.mass
                 # Set CoM
-                t = link.inertial.origin.position
-                r = link.inertial.origin.rotation
-                new_link.inertia_properties.com = (t[0], t[1], t[2])
+                new_link.frame.rotation = self._parse_link_rotation(link)
+                new_link.frame.translation = self._parse_link_translation(link)
                 # Set reference frame
-                new_link.frame.name = 'ref_' + str(link.name)
+                new_link.set_ref_frame('ref_' + str(link.name))
+                # Add the link
+                self.dsl.add_link(new_link)
 
-    def parse(self):
-        self.set_robot_base()
-        self.get_links()
+    def get_joints(self):
+        """Iterate through URDF joints and create new DSL joints"""
+        valid_joints = {'revolute': 'r', 'prismatic': 'p'}
+        for joint in self.urdf.joints:
+            if joint.type in valid_joints:
+                # Create a new joint
+                new_joint = Joint()
+                # Set the name
+                new_joint.name = joint.name
+                # Set the type
+                new_joint.type = valid_joints[joint.type]
+                # Set the position wr to parent link
+                t = joint.origin.postion
+                r = joint.origin.rotation
+                new_joint.translation = (t[0], t[1], t[2])
+                new_joint.rotation = (r[0], r[1], r[2])
+                self.dsl.add_joint(new_joint)
+
+    def create_map(self):
+        pass
 
 
 if __name__ == '__main__':
     urdf_robot = URDF.from_xml_file(dirname(realpath(__file__)) + '/sawyer.urdf')
     dsl_robot = DslUrdfParser()
-    dsl_robot.parse()
-    print 'test'
-    print 'parse'
+    print urdf_robot.links[2]
+    print type(urdf_robot.links)
