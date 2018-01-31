@@ -68,9 +68,9 @@ class InertiaProperties:
 
 class Children:
     """Creates a link-joint association"""
-    def __init__(self, parent='linkX', child='jointX', no_children=False):
-        self.parent = parent
-        self.child = child
+    def __init__(self, child='linkX', joint='jointX', no_children=False):
+        self.child_link = child
+        self.joint_connector = joint
         self.no_children = no_children
 
     def __str__(self):
@@ -128,19 +128,21 @@ class Joint:
 
 
 class Robot:
-    def __init__(self, name='Robo', base=Link(is_base=True), links=Link(), joints=Joint()):
+    def __init__(self, name='Robo', base=Link(is_base=True)):
         self.name = name
-        self.joints = [joints]
+        self.joints = []
         self.base = base
         self.links = [base]
-        self.links.append(links)
         self.id = 0
 
     def set_name(self, name):
         self.name = name
 
-    def set_base(self, base):
-        self.base = base
+    def set_base(self, base=None):
+        if base is None:
+            self.links[0] = self.base
+        else:
+            self.links[0] = base
 
     def add_joint(self, joint):
         self.joints.append(joint)
@@ -170,6 +172,8 @@ class DslUrdfParser:
         # Start
         self.set_robot_base('base')
         self.get_links()
+        self.get_joints()
+        self.create_map()
 
     def _parse_inertia(self, urdf_link):
         i = urdf_link.inertial.inertia
@@ -191,11 +195,13 @@ class DslUrdfParser:
         :param name: Name of the base link in the URDF file"""
         urdf_base_link = self.urdf.link_map[name]
         self.dsl.base = Link(link_name=name, is_base=True)
-        self.dsl.base.inertia_properties.inertia = self._parse_inertia(urdf_base_link)
-        self.dsl.base.inertia_properties.mass = urdf_base_link.inertial.mass
-        self.dsl.base.frame.rotation = self._parse_link_rotation(urdf_base_link)
-        self.dsl.base.frame.translation = self._parse_link_translation(urdf_base_link)
+        if urdf_base_link.inertial is not None:
+            self.dsl.base.inertia_properties.inertia = self._parse_inertia(urdf_base_link)
+            self.dsl.base.inertia_properties.mass = urdf_base_link.inertial.mass
+            self.dsl.base.frame.rotation = self._parse_link_rotation(urdf_base_link)
+            self.dsl.base.frame.translation = self._parse_link_translation(urdf_base_link)
         self.dsl.base.set_ref_frame('ref_' + name)
+        self.dsl.set_base()
 
     def get_links(self):
         """Iterate through URDF links and create new DSL links"""
@@ -229,14 +235,28 @@ class DslUrdfParser:
                 # Set the type
                 new_joint.type = valid_joints[joint.type]
                 # Set the position wr to parent link
-                t = joint.origin.postion
-                r = joint.origin.rotation
+                t = joint.origin.xyz
+                r = joint.origin.rpy
                 new_joint.translation = (t[0], t[1], t[2])
                 new_joint.rotation = (r[0], r[1], r[2])
                 self.dsl.add_joint(new_joint)
 
     def create_map(self):
-        pass
+        """Iterate through kinematic joints and links and assign them parents and children"""
+        # Go through all the joints
+        for joint in self.urdf.joints:
+            if joint.type == 'fixed':
+                continue
+            # Get the child and parent links
+            child = joint.child
+            parent = joint.parent
+            # Now look for the parent link
+            for link in self.dsl.links:
+                if link.link_name == parent:
+                    # and set its child link and the joint that connects them
+                    link.children.child_link = child
+                    link.children.joint_connector = joint.name
+                    break
 
 
 if __name__ == '__main__':
