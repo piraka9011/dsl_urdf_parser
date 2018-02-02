@@ -73,14 +73,16 @@ class InertiaProperties:
 
 class Children:
     """Creates a link-joint association"""
-    def __init__(self, no_children=False):
+    def __init__(self, no_children=True):
         self.children = []
         self.joints = []
         self.no_children = no_children
 
     def __str__(self):
+        if self.children or self.joints:
+            self.no_children = False
         if self.no_children:
-            return '\tchildren {}\n'
+            return '\tchildren {}'
         else:
             child_string = ''
             for i, x in enumerate(self.children):
@@ -103,7 +105,6 @@ class Link:
         if frame is None:
             self.frame = Frame()
         self.isBase = is_base
-
 
     def set_ref_frame(self, name):
         self.frame.name = name
@@ -273,7 +274,7 @@ class DslUrdfParser:
 
     def auto_parse(self):
         # Start
-        self.set_robot_base('base')
+        self.set_robot_base('right_arm_base_link')
         self.get_links()
         self.get_joints()
         self.get_children()

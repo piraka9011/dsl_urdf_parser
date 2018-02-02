@@ -1,0 +1,247 @@
+Robot Sawyer {
+
+RobotBase right_arm_base_link {
+	inertia_properties {
+		mass = 2.06870000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.00675990 Iy=0.00678770 Iz=0.00740310 Ixy=-0.00004202 Ixz=-0.00000062 Iyz=0.00001589
+		ref_frame = ref_right_arm_base_link
+	}
+
+	children {
+		right_l0 via right_j0
+	}
+
+	frames {
+		ref_right_arm_base_link {
+			translation = (-0.00062410, -0.00002803, 0.06540400)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+link right_l0 {
+	id = 1
+	inertia_properties {
+		mass = 5.32130000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.05331400 Iy=0.05790200 Iz=0.02365900 Ixy=0.00470930 Ixz=0.01173400 Iyz=0.00801790
+		ref_frame = ref_right_l0
+	}
+
+	children {
+		right_l1 via right_j1
+		head via head_pan
+	}
+
+	frames {
+		ref_right_l0 {
+			translation = (0.02436600, 0.01096900, 0.14363000)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+link head {
+	id = 2
+	inertia_properties {
+		mass = 1.57950000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.01183300 Iy=0.00827090 Iz=0.00496610 Ixy=-0.00000447 Ixz=0.00004943 Iyz=0.00000042
+		ref_frame = ref_head
+	}
+
+	children {
+		right_l0 via head_pan
+	}
+
+	frames {
+		ref_head {
+			translation = (0.00532070, -0.00002655, 0.10210000)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+link right_l1 {
+	id = 3
+	inertia_properties {
+		mass = 4.50500000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.02239800 Iy=0.01461300 Iz=0.01729500 Ixy=-0.00023986 Ixz=-0.00029362 Iyz=-0.00608750
+		ref_frame = ref_right_l1
+	}
+
+	children {
+		right_l2 via right_j2
+	}
+
+	frames {
+		ref_right_l1 {
+			translation = (-0.00308490, -0.02681100, 0.09252100)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+link right_l2 {
+	id = 4
+	inertia_properties {
+		mass = 1.74500000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.02550600 Iy=0.02530000 Iz=0.00341790 Ixy=0.00000441 Ixz=0.00001495 Iyz=-0.00332040
+		ref_frame = ref_right_l2
+	}
+
+	children {
+		right_l3 via right_j3
+	}
+
+	frames {
+		ref_right_l2 {
+			translation = (-0.00016044, -0.01496700, 0.13582000)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+link right_l3 {
+	id = 5
+	inertia_properties {
+		mass = 2.50970000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.01016000 Iy=0.00656850 Iz=0.00690780 Ixy=-0.00000975 Ixz=0.00026624 Iyz=0.00303160
+		ref_frame = ref_right_l3
+	}
+
+	children {
+		right_l4 via right_j4
+	}
+
+	frames {
+		ref_right_l3 {
+			translation = (-0.00481350, -0.02810000, -0.08415400)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+link right_l4 {
+	id = 6
+	inertia_properties {
+		mass = 1.11360000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.01355700 Iy=0.01355500 Iz=0.00136580 Ixy=0.00001811 Ixz=0.00013523 Iyz=0.00105610
+		ref_frame = ref_right_l4
+	}
+
+	children {
+		right_l5 via right_j5
+	}
+
+	frames {
+		ref_right_l4 {
+			translation = (-0.00188440, 0.00690010, 0.13410000)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+link right_l5 {
+	id = 7
+	inertia_properties {
+		mass = 1.56250000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.00473280 Iy=0.00296760 Iz=0.00317620 Ixy=0.00011526 Ixz=0.00004627 Iyz=-0.00115570
+		ref_frame = ref_right_l5
+	}
+
+	children {
+		right_l6 via right_j6
+	}
+
+	frames {
+		ref_right_l5 {
+			translation = (0.00611330, -0.02369700, 0.07641600)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+link right_l6 {
+	id = 8
+	inertia_properties {
+		mass = 0.32920000
+		CoM = (0.0, 0.0, 0.0)
+		Ix=0.00031105 Iy=0.00021549 Iz=0.00035976 Ixy=0.00000148 Ixz=-0.00000037 Iyz=-0.00000845
+		ref_frame = ref_right_l6
+	}
+
+	children {}
+
+	frames {
+		ref_right_l6 {
+			translation = (-0.00000807, 0.00858380, -0.00495660)
+			rotation = (0.00000000, 0.00000000, 0.00000000)
+		}
+	}
+}
+
+r_joint right_j0 {
+	ref_frame {
+		translation = (0.00000000, 0.00000000, 0.08000000)
+		rotation = (0.00000000, 0.00000000, 0.00000000)
+	}
+}
+
+r_joint head_pan {
+	ref_frame {
+		translation = (0.00000000, 0.00000000, 0.29650000)
+		rotation = (0.00000000, 0.00000000, 0.00000000)
+	}
+}
+
+r_joint right_j1 {
+	ref_frame {
+		translation = (0.08100000, 0.05000000, 0.23700000)
+		rotation = (-1.57079633, 1.57079633, 0.00000000)
+	}
+}
+
+r_joint right_j2 {
+	ref_frame {
+		translation = (0.00000000, -0.14000000, 0.14250000)
+		rotation = (1.57079633, 0.00000000, 0.00000000)
+	}
+}
+
+r_joint right_j3 {
+	ref_frame {
+		translation = (0.00000000, -0.04200000, 0.26000000)
+		rotation = (-1.57079633, 0.00000000, 0.00000000)
+	}
+}
+
+r_joint right_j4 {
+	ref_frame {
+		translation = (0.00000000, -0.12500000, -0.12650000)
+		rotation = (1.57079633, 0.00000000, 0.00000000)
+	}
+}
+
+r_joint right_j5 {
+	ref_frame {
+		translation = (0.00000000, 0.03100000, 0.27500000)
+		rotation = (-1.57079633, 0.00000000, 0.00000000)
+	}
+}
+
+r_joint right_j6 {
+	ref_frame {
+		translation = (0.00000000, -0.11000000, 0.10530000)
+		rotation = (-1.57079633, -0.17453000, 3.14160000)
+	}
+}
+
+
+}
